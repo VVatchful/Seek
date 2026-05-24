@@ -17,6 +17,12 @@ def gather_domain(url):
         return "other"
     return domain
 
+def display_categories(categories):
+    for domain, bookmarks in categories.items():
+        print(f"{domain} ({len(bookmarks)})")
+        for bookmark in bookmarks:
+            print(f"  └─ {bookmark['name']}")
+
 # finds how many of the same bookmarks have the same domain and appends them to a dict
 def categorize_domain(node, result={}):
     if node["type"] == "url":
@@ -45,7 +51,7 @@ try:
         bookmarks = json.load(f)
         print(bookmarks)
         categories = categorize_domain(bookmarks["roots"]["bookmark_bar"])
-        for domain, items in categories.items():
-            print(f"{domain}: {len(items)} bookmarks")
+        print(categories)
+        display_categories(categories)
 except FileNotFoundError:
     print("Bookmarks file not found at: {}".format(bookmarks_path))
