@@ -36,15 +36,34 @@ def categorize_domain(node, result={}):
     #return the results
     return result
 
+def structure(categories):
+    new_children= []
+    for domain, bookmarks in categories.items():
+        if len(bookmarks) == 1:
+            new_children.append(bookmarks[0])
+        else:
+            new_children.append({
+                "type": "folder",
+                "name": domain,
+                "children": bookmarks
+            })
+    return new_children
+
 local_app_data = os.environ['LOCALAPPDATA']
 bookmarks_path = os.path.join(local_app_data, "Google", "Chrome", "User Data", "Default", "Bookmarks")
 
 try:
     with open(bookmarks_path, "r", encoding="utf-8") as f:
         bookmarks = json.load(f)
-        print(bookmarks)
         categories = categorize_domain(bookmarks["roots"]["bookmark_bar"])
-        print(categories)
-        display_categories(categories)
+        new_children = structure(categories)
+
+        for item in new_children:
+            if item["type"] == "folder":
+                print(f"📁 {item['name']} ({len(item['children'])})")
+                for child in item["children"]:
+                    print(f"   └─ {child['name']}")
+            else:
+                print(f"🔗 {item['name']}")
 except FileNotFoundError:
     print("Bookmarks file not found at: {}".format(bookmarks_path))
