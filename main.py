@@ -36,13 +36,6 @@ def categorize_domain(node, result={}):
     #return the results
     return result
 
-
-
-
-
-
-
-# "C:\Users\tdbt1\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
 local_app_data = os.environ['LOCALAPPDATA']
 bookmarks_path = os.path.join(local_app_data, "Google", "Chrome", "User Data", "Default", "Bookmarks")
 
