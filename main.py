@@ -1,6 +1,5 @@
 import os
 import json
-from unittest import result
 
 from urllib.parse import urlparse
 
@@ -37,24 +36,6 @@ def categorize_domain(node, result={}):
     #return the results
     return result
 
-def structure(categories):
-    new_children = []
-    for domain, bookmarks in categories.items():
-        if len(bookmarks) == 1:
-            #append bookmark to itself
-            bookmark = bookmarks.append(bookmarks[0])
-            new_children.append(bookmark)
-        else:
-            for bookmark in bookmarks:
-
-
-
-
-
-
-
-
-# "C:\Users\tdbt1\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
 local_app_data = os.environ['LOCALAPPDATA']
 bookmarks_path = os.path.join(local_app_data, "Google", "Chrome", "User Data", "Default", "Bookmarks")
 
