@@ -1,5 +1,6 @@
 import os
 import json
+from unittest import result
 
 from urllib.parse import urlparse
 
@@ -35,6 +36,17 @@ def categorize_domain(node, result={}):
             categorize_domain(child, result)
     #return the results
     return result
+
+def structure(categories):
+    new_children = []
+    for domain, bookmarks in categories.items():
+        if len(bookmarks) == 1:
+            #append bookmark to itself
+            bookmark = bookmarks.append(bookmarks[0])
+            new_children.append(bookmark)
+        else:
+            for bookmark in bookmarks:
+
 
 
 
