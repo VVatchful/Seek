@@ -43,8 +43,6 @@ def categorize_domain(flat_list, result=None):
         result.setdefault(domain, []).append(bookmark)
     return result
 
-import uuid
-
 def structure(categories):
     new_children = []
     for domain, bookmarks in categories.items():
@@ -62,6 +60,28 @@ def structure(categories):
             })
     return new_children
 
+def export_html(new_children, filename="bookmarks_export.html"):
+    def write_node(node, f, indent=0):
+        padding = "  " * indent
+        if node["type"] == "url":
+            f.write(f'{padding}<DT><A HREF="{node["url"]}">{node["name"]}</A>\n')
+        elif node["type"] == "folder":
+            f.write(f"{padding}<DT><H3>{node['name']}</H3>\n")
+            f.write(f"{padding}<DL><p>\n")
+            for child in node["children"]:
+                write_node(child, f, indent + 1)
+            f.write(f"{padding}</DL><p>\n")
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write('<!DOCTYPE NETSCAPE-Bookmark-file-1>\n')
+        f.write('<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">\n')
+        f.write('<DL><p>\n')
+        for node in new_children:
+            write_node(node, f)
+        f.write('</DL><p>')
+
+
+
 local_app_data = os.environ['LOCALAPPDATA']
 bookmarks_path = os.path.join(local_app_data, "Google", "Chrome", "User Data", "Default", "Bookmarks")
 
@@ -76,7 +96,7 @@ def main():
         print("\nWhat would you like to do?")
         print("1. Display bookmarks by domain")
         print("2. Preview a reorganized structure of bookmarks")
-        print("3. Save to Chrome")
+        print("3. Import html to Chrome")
         print("4. Exit")
         print("5. restore from .bak")
 
@@ -95,16 +115,14 @@ def main():
                 else:
                     print(f":{item['name']}")
 
-
         elif choice == "3":
-            print("Make sure Chrome is closed! Proceed? (y/n)")
-            confirm = input("> ")
-            if confirm == "y":
-                new_children = structure(categories)
-                bookmarks["roots"]["bookmark_bar"]["children"] = new_children
-                shutil.copy(bookmarks_path, bookmarks_path + ".bak")
-                with open(bookmarks_path, "w", encoding="utf-8") as f:
-                    json.dump(bookmarks, f, indent=4)
+            new_children = structure(categories)
+            export_html(new_children)
+            print("\nDone! Now in Chrome:")
+            print("1. Go to chrome://bookmarks")
+            print("2. Click the three dots menu (⋮) in the top right")
+            print("3. Click 'Import bookmarks'")
+            print("4. Select bookmarks_export.html")
 
 
         elif choice == "4":
